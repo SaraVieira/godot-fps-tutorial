@@ -1,8 +1,7 @@
-[gd_scene load_steps=16 format=3 uid="uid://cpxehbm46fm2h"]
+[gd_scene load_steps=18 format=3 uid="uid://cpxehbm46fm2h"]
 
 [ext_resource type="Script" path="res://world.gd" id="1_c64fg"]
 [ext_resource type="PackedScene" path="res://home.tscn" id="1_f5n40"]
-[ext_resource type="PackedScene" uid="uid://bbl8b8ku3ndfp" path="res://player.tscn" id="2_n2ayn"]
 [ext_resource type="Shader" path="res://textures/psx.gdshader" id="3_5qoqq"]
 [ext_resource type="Texture2D" uid="uid://bw4md6cq34oa6" path="res://addons/kenney_prototype_textures/dark/texture_08.png" id="4_6uoo4"]
 [ext_resource type="Texture2D" uid="uid://gveer0gspy8c" path="res://addons/kenney_prototype_textures/orange/texture_06.png" id="5_jq3s5"]
@@ -15,7 +14,7 @@ shader = ExtResource("3_5qoqq")
 shader_parameter/snapRes = 8.0
 shader_parameter/roughness = 1.0
 shader_parameter/specular = 0.1
-shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_scale = Vector2(2, 2)
 shader_parameter/uv_offset = Vector2(0, 0)
 shader_parameter/light_intensity = 0.3
 shader_parameter/transparent = false
@@ -111,6 +110,26 @@ shader_parameter/uv_offset = Vector2(0, 0)
 shader_parameter/light_intensity = 0.3
 shader_parameter/transparent = false
 shader_parameter/albedoTex = ExtResource("6_60d4t")
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_g3edx"]
+sky_top_color = Color(1, 1, 0.521569, 1)
+sky_horizon_color = Color(0.8, 0.79225, 0.663642, 1)
+sky_energy_multiplier = 2.0
+ground_horizon_color = Color(0.8, 0.79225, 0.663642, 1)
+
+[sub_resource type="Sky" id="Sky_qtadg"]
+sky_material = SubResource("ProceduralSkyMaterial_g3edx")
+
+[sub_resource type="Environment" id="Environment_b7jbu"]
+background_mode = 2
+sky = SubResource("Sky_qtadg")
+ambient_light_source = 3
+tonemap_mode = 2
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+glow_enabled = true
 
 [sub_resource type="Shader" id="Shader_d5eji"]
 code = "/*
@@ -346,24 +365,24 @@ void fragment()
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_14wtp"]
 shader = SubResource("Shader_d5eji")
-shader_parameter/overlay = true
+shader_parameter/overlay = false
 shader_parameter/scanlines_opacity = 0.4
 shader_parameter/scanlines_width = 0.25
 shader_parameter/grille_opacity = 0.3
 shader_parameter/resolution = Vector2(640, 480)
-shader_parameter/pixelate = false
+shader_parameter/pixelate = true
 shader_parameter/roll = true
-shader_parameter/roll_speed = 8.0
-shader_parameter/roll_size = 15.0
+shader_parameter/roll_speed = 1.0
+shader_parameter/roll_size = 8.0
 shader_parameter/roll_variation = 1.8
-shader_parameter/distort_intensity = 0.05
+shader_parameter/distort_intensity = 0.0
 shader_parameter/noise_opacity = 0.4
 shader_parameter/noise_speed = 5.0
 shader_parameter/static_noise_intensity = 0.06
-shader_parameter/aberration = 0.03
+shader_parameter/aberration = 4.75e-08
 shader_parameter/brightness = 1.4
 shader_parameter/discolor = true
-shader_parameter/warp_amount = 1.0
+shader_parameter/warp_amount = 0.3
 shader_parameter/clip_warp = false
 shader_parameter/vignette_intensity = 0.4
 shader_parameter/vignette_opacity = 0.5
@@ -371,12 +390,8 @@ shader_parameter/vignette_opacity = 0.5
 [node name="World" type="Node"]
 script = ExtResource("1_c64fg")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.836514, -0.288853, 0.465626, 0.224143, 0.595034, 0.771813, -0.500003, 0.749999, -0.43301, 0, 5, 0)
-light_energy = 2.455
-shadow_enabled = true
-
 [node name="env" parent="." instance=ExtResource("1_f5n40")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.718372, 0)
 
 [node name="Node3D" parent="env" index="0"]
 transform = Transform3D(120, 0, 0, 0, 120, 0, 0, 0, 120, 0.099762, -0.724696, -0.0532265)
@@ -390,12 +405,14 @@ surface_material_override/1 = SubResource("ShaderMaterial_mwna4")
 surface_material_override/2 = SubResource("ShaderMaterial_pkhik")
 surface_material_override/3 = SubResource("ShaderMaterial_l6dp2")
 
-[node name="CharacterBody3D" parent="." instance=ExtResource("2_n2ayn")]
-transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, -1.12849, 0, 3.87336)
+[node name="Lights & Effects" type="Node" parent="."]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lights & Effects"]
+environment = SubResource("Environment_b7jbu")
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+[node name="CanvasLayer" type="CanvasLayer" parent="Lights & Effects"]
+
+[node name="ColorRect" type="ColorRect" parent="Lights & Effects/CanvasLayer"]
 material = SubResource("ShaderMaterial_14wtp")
 anchors_preset = 15
 anchor_right = 1.0
@@ -403,6 +420,56 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="main menu" type="PanelContainer" parent="Lights & Effects/CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -187.0
+offset_top = -97.0
+offset_right = 187.0
+offset_bottom = 97.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Lights & Effects/CanvasLayer/main menu"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Lights & Effects/CanvasLayer/main menu/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="Lights & Effects/CanvasLayer/main menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Main Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Join Button" type="Button" parent="Lights & Effects/CanvasLayer/main menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Join"
+
+[node name="Host button" type="Button" parent="Lights & Effects/CanvasLayer/main menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Host"
+
+[node name="Adddress entry" type="LineEdit" parent="Lights & Effects/CanvasLayer/main menu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "enter adress to join here"
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lights & Effects"]
+transform = Transform3D(0.338147, 0.941093, 0, 0.0188056, -0.00675709, 0.9998, 0.940906, -0.338079, -0.0199827, 0, 9.9864, -0.0710468)
+light_energy = 2.0
+shadow_enabled = true
+
+[connection signal="pressed" from="Lights & Effects/CanvasLayer/main menu/MarginContainer/VBoxContainer/Join Button" to="." method="_on_join_button_pressed"]
+[connection signal="pressed" from="Lights & Effects/CanvasLayer/main menu/MarginContainer/VBoxContainer/Host button" to="." method="_on_host_button_pressed"]
 
 [editable path="env"]
 [editable path="env/env"]

@@ -147,7 +147,7 @@ _data = {
 "shoot": SubResource("Animation_c5f8a")
 }
 
-[node name="CharacterBody3D" type="CharacterBody3D"]
+[node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_ry4hi")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
@@ -165,6 +165,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.49777, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.25, -0.5)
 
 [node name="MuzzleFlash" type="GPUParticles3D" parent="Camera3D/GUN"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.329141)
 emitting = false
 amount = 1
 lifetime = 0.25
