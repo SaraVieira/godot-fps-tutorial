@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" uid="uid://bis3tbxc85rwb" path="res://models/env.gltf" id="2_xfo14"]
+[ext_resource type="Texture2D" uid="uid://b7ugv7gtwllpc" path="res://addons/kenney_prototype_textures/dark/texture_01.png" id="4_k17ay"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ina0m"]
+albedo_texture = ExtResource("4_k17ay")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2fkq2"]
+
+[node name="env" type="Node3D"]
+
+[node name="Node3D" type="Node3D" parent="."]
+transform = Transform3D(120, 0, 0, 0, 120, 0, 0, 0, 120, 0.099762, -0.344173, -0.0532265)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D"]
+material_override = SubResource("StandardMaterial3D_ina0m")
+mesh = SubResource("PlaneMesh_2fkq2")
+
+[node name="env" parent="." instance=ExtResource("2_xfo14")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.95266, -0.284565, -1.72892)
